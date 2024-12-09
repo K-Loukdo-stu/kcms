@@ -1,0 +1,110 @@
+<script>
+	import Edit from '$components/icons/Edit.svelte';
+	import Eye from '$components/icons/Eye/Eye.svelte';
+	import Trash from '$components/icons/Trash.svelte';
+	import { createEventDispatcher } from 'svelte';
+	let dispatch = createEventDispatcher();
+	export let data = [];
+</script>
+
+<table class="table-auto w-full mt-5">
+	<thead class="text-sm  bg-[#787878] text-[#FFFFFF] ">
+		<tr>
+			<th>
+				<div class="font-semibold text-center">Product</div>
+			</th>
+			<th class="p-2">
+				<div class="font-semibold text-center">Name</div>
+			</th>
+			<th class="p-2">
+				<div class="font-semibold text-center">Price</div>
+			</th>
+			<th class="p-2">
+				<div class="font-semibold text-center">Product Type</div>
+			</th>
+			<th class="p-2">
+				<div class="font-semibold text-center">Action</div>
+			</th>
+		</tr>
+	</thead>
+
+	<tbody class="text-sm divide-y divide-gray-300 text-[#585861]">
+		{#each data as dataLine}
+			<tr>
+				{#if dataLine.photo}
+					<td class="p-2">
+						<div>
+							<img class=" w-10 h-10 m-auto" src={dataLine.photo.url} alt="" />
+						</div>
+					</td>
+				{:else}
+					<td class="p-2">
+						<div>
+							<img
+								class=" w-10 h-10 m-auto"
+								src="https://cdn.worldvectorlogo.com/logos/standout-stickers-1.svg"
+								alt=""
+							/>
+						</div>
+					</td>
+				{/if}
+
+				<td class="p-2">
+					<div class=" text-gray-600 text-center">{dataLine.name}</div>
+				</td>
+				<td class="p-2">
+					<div class=" text-gray-600 text-center">{dataLine.price}</div>
+				</td>
+				<td class="p-2">
+					<div class=" text-gray-600 text-center">{dataLine.productType.name}</div>
+				</td>
+
+				<td class="p-2 space-x-2">
+					<div class=" text-gray-600 text-center flex flex-row justify-center items-center">
+						<div class=" text-gray-600 text-center flex flex-row justify-center items-center">
+							<a href={`/dashboard/kchannel/channel/channel/product/detail/${dataLine.id}`} title={data.name}>
+								<div class="cursor-pointer hover:bg-gray-400/50 p-1 rounded-full">
+									<Eye />
+								</div>
+							</a>
+						</div>
+						<div
+							class="cursor-pointer hover:bg-gray-400/50 p-1 rounded-full"
+							on:click={() => {
+								dispatch('edit', dataLine);
+							}}
+						>
+							<Edit />
+						</div>
+						<div
+							class="cursor-pointer hover:bg-gray-400/50 p-1 rounded-full"
+							on:click={() => {
+								dispatch('delete', dataLine);
+							}}
+						>
+							<Trash />
+						</div>
+					</div>
+				</td>
+			</tr>
+		{/each}
+	</tbody>
+</table>
+
+<style>
+	tr td:nth-child(n + 5),
+	tr th:nth-child(n + 5) {
+		border-radius: 0 0.625rem 0.625rem 0;
+	}
+	tr td:nth-child(1),
+	tr th:nth-child(1) {
+		border-radius: 0.625rem 0 0 0.625rem;
+	}
+
+	tbody tr:nth-child(even) {
+		background-color: #ffffff;
+	}
+	tbody tr:nth-child(odd) {
+		background-color: #eeeeee;
+	}
+</style>
