@@ -32,4 +32,10 @@ export const APIs = {
     csr_uri: `http://api.kradass.com/kchannel/graphql`,
     ssr_uri: `http://api.kradass.com/kchannel/graphql`
   },
+
+  KLOUKDO: {
+    name: 'KLOUKDO',
+    csr_uri: `http://127.0.0.1:3001/graphql`,
+    ssr_uri: `http://127.0.0.1:3001/graphql`
+  }
 }
