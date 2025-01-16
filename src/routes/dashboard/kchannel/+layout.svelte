@@ -91,6 +91,33 @@
 							href="/dashboard/kchannel/synchronize/channel"
 						/>
 					</MenuButton>
+
+					<MenuButton
+						title="KLoukdo"
+						href="/dashboard/kchannel/kloukdo"
+						hasSubMenu={true}
+					>
+					<SubMenuButton
+						title="Category"
+						href="/dashboard/kchannel/kloukdo/category"
+					/>
+					<SubMenuButton
+						title="Sub Category"
+						href="/dashboard/kchannel/kloukdo/sub-category"
+					/>
+					<SubMenuButton
+						title="KLoukdo Product"
+						href="/dashboard/kchannel/kloukdo/product"
+					/>
+					<SubMenuButton
+						title="Promotion"
+						href="/dashboard/kchannel/kloukdo/promotion"
+					/>
+					<SubMenuButton
+						title="Ads Image"
+						href="/dashboard/kchannel/kloukdo/ads-image"
+					/>
+					</MenuButton>
 				</div>
 			</div>
 			<div slot="content" class="relative h-full w-full">
