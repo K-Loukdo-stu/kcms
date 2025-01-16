@@ -11,12 +11,13 @@
 	import HeaderButton from "$components/elements/buttons/HeaderButton/HeaderButton.svelte";
 	import CreateChannelCatalog from "$components/modals/ChannelCatalog/CreateChannelCatalog/CreateChannelCatalog.svelte";
 	import EditChannelCatalog from "$components/modals/ChannelCatalog/EditChannelCatalog/EditChannelCatalog.svelte";
-	import KLoukdoCategory from "$components/elements/tables/KLoukdo/KLoukdoCategory.svelte";
-	import { deleteKLoukdoCategory, getKLoukdoCategories } from "$providers/actions/kloukdo/kloukdocategory";
-	import CreateKLoukdoCategory from "$components/modals/KLoukdo/Category/CreateKLoukdoCategory.svelte";
-	import UpdateKLoukdoCategory from "$components/modals/KLoukdo/Category/UpdateKLoukdoCategory.svelte";
+  import { deleteKLoukdoSubCategory } from "$providers/actions/kloukdo/kloukdosubcategory";
+  import CreateKLoukdoSubCategory from "$components/modals/KLoukdo/SubCategory/CreateKLoukdoSubCategory.svelte";
+  import UpdateKLoukdoSubCategory from "$components/modals/KLoukdo/SubCategory/UpdateKLoukdoSubCategory.svelte";
+  import KLoukdoAdsImage from "$components/elements/tables/KLoukdo/KLoukdoAdsImage.svelte";
+  import { getKLoukdoAdsImage } from "$providers/actions/kloukdo/kloukdoadsimage";
 
-	let category;
+	let subCategory;
 	let shownEdit = false;
 	let shownDelete = false;
 	let shown = false;
@@ -26,10 +27,11 @@
 	let currentPage = 1;
 	let searchText = "";
 	let Data = [];
+	let CategoryData = [];
 	let Page = 0;
-	const loadCategories = async () => {
+	const loadAdsImage = async () => {
 		try {
-			const res = await getKLoukdoCategories.load();
+			const res = await getKLoukdoAdsImage.load({page: Page});
 			Data = res.data;
 		} catch (err) {
 			// to do
@@ -38,7 +40,7 @@
 
 	// When Operating start run it first
 	onMount(async () => {
-		await loadCategories();
+		await loadAdsImage();
 	});
 </script>
 
@@ -50,11 +52,11 @@
 					on:onSearch={async (evt) => {
 						searchText = evt.detail;
 						currentPage = currentPage;
-						await loadCategories();
+						await loadAdsImage();
 					}}
 				/>
 				<HeaderButton
-					title={"New Category"}
+					title={"New Sub Category"}
 					on:click={() => {
 						shown = true;
 					}}
@@ -64,20 +66,19 @@
 	</div>
 	<div class="flex-grow">
 		<div>
-			<KLoukdoCategory
+			<KLoukdoAdsImage
 				{Data}
 				on:onEdit={async (evt) => {
-					category = evt.detail;
+					subCategory = evt.detail;
 					shownEdit = true;
 				}}
 				on:onDelete={async (evt) => {
-					category = evt.detail;
+					subCategory = evt.detail;
 					shownDelete = true;
 				}}
 			/>
 		</div>
-	</div>
-
+		
 	<div class="flex-grow-0 mb-5 mr-5">
 		{#if Page != 1}
 			<Pagenetion
@@ -85,42 +86,47 @@
 				{currentPage}
 				on:onCurrentPage={async (evt) => {
 					currentPage = evt.detail;
-					await loadCategories();
+					await loadAdsImage();
 				}}
 			/>
 		{/if}
 	</div>
+	</div>
+
 </div>
 
 <Modal {shown}>
-	<CreateKLoukdoCategory
+	<CreateKLoukdoSubCategory
+		categoryList={CategoryData}
 		on:close={() => {
 			shown = false;
 		}}
 		on:create={async () => {
 			shown = false;
-			await loadCategories();
+			await loadAdsImage();
 		}}
 	/>
 </Modal>
 
+
 <Modal shown={shownEdit}>
-	<UpdateKLoukdoCategory
-		param={category}
+	<UpdateKLoukdoSubCategory
+		param={subCategory}
+		categoryList={CategoryData}
 		on:close={() => {
 			shownEdit = false;
 		}}
 		on:edit={async () => {
 			shownEdit = false;
-			await loadCategories();
+			await loadAdsImage();
 		}}
 	/>
 </Modal>
 
 <Modal shown={shownDelete}>
 	<DeleteModal
-		param={category}
-		title={"category"}
+		param={subCategory}
+		title={"sub category"}
 		on:close={() => {
 			shownDelete = false;
 		}}
@@ -128,9 +134,9 @@
 			shownDelete = false;
 			let id = evt.detail.id;
 			try {
-				const res = await deleteKLoukdoCategory.load({ id });
+				const res = await deleteKLoukdoSubCategory.load({ id });
 			} catch {}
-			await loadCategories();
+			await loadAdsImage();
 		}}
 	/>
 </Modal>
