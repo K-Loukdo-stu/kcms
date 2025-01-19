@@ -29,10 +29,10 @@
 	let searchText = "";
 	let Data = [];
 	let CategoryData = [];
-	let Page = 0;
+	let Page = 3;
 	const loadSubCategories = async () => {
 		try {
-			const res = await getKLoukdoSubCategoriesByPage.load({page: Page});
+			const res = await getKLoukdoSubCategoriesByPage.load({page: currentPage-1});
 			Data = res.data;
 		} catch (err) {
 			// to do
@@ -96,6 +96,7 @@
 				{currentPage}
 				on:onCurrentPage={async (evt) => {
 					currentPage = evt.detail;
+					// Page = currentPage;
 					await loadSubCategories();
 				}}
 			/>

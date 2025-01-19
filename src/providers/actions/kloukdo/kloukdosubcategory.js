@@ -1,5 +1,5 @@
 import { APIs } from "$lib/statics";
-import { CREATE_KLOUKDO_SUB_CATEGORY_MUTATION, DELETE_KLOUKDO_SUB_CATEGORY_MUTATION, GET_KLOUKDO_SUB_CATEGORY_BY_PAGE_QUERY, GET_KLOUKDO_SUB_CATEGORY_QUERY, UPDATE_KLOUKDO_SUB_CATEGORY_MUTATION } from "$providers/queries/kloukdo/kloukdosubcategory";
+import { CREATE_KLOUKDO_SUB_CATEGORY_MUTATION, DELETE_KLOUKDO_SUB_CATEGORY_MUTATION, GET_KLOUKDO_SUB_CATEGORY_BY_CATEGORY_QUERY, GET_KLOUKDO_SUB_CATEGORY_BY_PAGE_QUERY, GET_KLOUKDO_SUB_CATEGORY_QUERY, UPDATE_KLOUKDO_SUB_CATEGORY_MUTATION } from "$providers/queries/kloukdo/kloukdosubcategory";
 import { endpointFetch } from "../utils";
 
 export const getKLoukdoSubCategoriesByPage = {
@@ -23,6 +23,20 @@ export const getKLoukdoSubCategories = {
         }, APIs.KLOUKDO);
         if (res?.success == true) {
             res['data'] = res['data']['getKLoukdoSubCategories'];
+            return res;
+        }
+        throw res;
+    }
+}
+
+export const getKLoukdoSubCategoriesByCategory = {
+    load: async ({ category }) => {
+        const res = await endpointFetch({
+            query: GET_KLOUKDO_SUB_CATEGORY_BY_CATEGORY_QUERY,
+            variables: { category }
+        }, APIs.KLOUKDO);
+        if (res?.success == true) {
+            res['data'] = res['data']['getKLoukdoSubCategoriesByCategory'];
             return res;
         }
         throw res;

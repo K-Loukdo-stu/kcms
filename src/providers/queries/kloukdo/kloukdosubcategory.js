@@ -28,6 +28,21 @@ query getKLoukdoSubCategoriesByPage( $page: Float! ){
 }
 `;
 
+export const GET_KLOUKDO_SUB_CATEGORY_BY_CATEGORY_QUERY = gql`
+query getKLoukdoSubCategoriesByCategory( $category: String! ){
+    getKLoukdoSubCategoriesByCategory (
+        params: {
+            category: $category
+        }
+    ),{
+        id
+        name
+        category { name }
+        icon
+    }
+}
+`;
+
 export const GET_KLOUKDO_SUB_CATEGORY_QUERY = gql`
 query getKLoukdoSubCategories{
     getKLoukdoSubCategories{
