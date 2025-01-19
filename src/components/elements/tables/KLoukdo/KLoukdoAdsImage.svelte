@@ -28,11 +28,17 @@
 				<td class="p-2">
 					<div class=" text-gray-600 text-center">{data.name}</div>
 				</td>
-				{#if data.icon}
+				{#if data.image}
 					<td class="p-2">
-						<div>
-							<img class=" w-10 h-10 m-auto" src={data.image} alt="" />
+						<div class=" text-gray-600 text-center">
+							<button
+								class=" text-gray-600 text-center border-2 p-1 rounded-md hover:bg-gray-800 hover:text-white"
+								on:click={async (evt) => {
+									dispatch('onShowImage', data);
+								}}
+							>1 image</button>
 						</div>
+						
 					</td>
 				{:else}
 					<td class="p-2">
@@ -48,7 +54,6 @@
                 <td class="p-2">
 					<div class=" text-gray-600 text-center">{data.endDate}</div>
 				</td>
-
 
 				<td class="p-2 space-x-2">
 					<div class=" text-gray-600 text-center flex flex-row justify-center items-center">

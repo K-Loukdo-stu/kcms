@@ -3,24 +3,21 @@
 	import SearchText from "$components/elements/buttons/SearchText/SearchText.svelte";
 	import Pagenetion from "$components/elements/pagenation/Pagenation/Pagenetion.svelte";
 	import { searchChannelCatalogs } from "$providers/actions/kchannel/catalog";
-	import ChannelCatalog from "$components/elements/tables/ChannelCatalog/ChannelCatalog.svelte";
 	import Modal from "$components/modals/Modal.svelte";
-	import CreateService from "$components/modals/CreateService/CreateService.svelte";
-	import EditService from "$components/modals/EditService/EditService.svelte";
 	import DeleteModal from "$components/modals/DeleteModal/DeleteModal.svelte";
 	import HeaderButton from "$components/elements/buttons/HeaderButton/HeaderButton.svelte";
-	import CreateChannelCatalog from "$components/modals/ChannelCatalog/CreateChannelCatalog/CreateChannelCatalog.svelte";
-	import EditChannelCatalog from "$components/modals/ChannelCatalog/EditChannelCatalog/EditChannelCatalog.svelte";
   import { deleteKLoukdoSubCategory } from "$providers/actions/kloukdo/kloukdosubcategory";
-  import CreateKLoukdoSubCategory from "$components/modals/KLoukdo/SubCategory/CreateKLoukdoSubCategory.svelte";
-  import UpdateKLoukdoSubCategory from "$components/modals/KLoukdo/SubCategory/UpdateKLoukdoSubCategory.svelte";
   import KLoukdoAdsImage from "$components/elements/tables/KLoukdo/KLoukdoAdsImage.svelte";
-  import { getKLoukdoAdsImage } from "$providers/actions/kloukdo/kloukdoadsimage";
+  import { deleteKLoukdoAds, getKLoukdoAdsImage } from "$providers/actions/kloukdo/kloukdoadsimage";
+  import CreateKLoukdoAdsImage from "$components/modals/KLoukdo/AdsImage/CreateKLoukdoAdsImage.svelte";
+  import ShowAllImage from "$components/modals/KLoukdo/ShowAllImage.svelte";
+  import UpdateKLoukdoAdsImage from "$components/modals/KLoukdo/AdsImage/UpdateKLoukdoAdsImage.svelte";
 
-	let subCategory;
+	let ads;
 	let shownEdit = false;
 	let shownDelete = false;
 	let shown = false;
+	let shownAllImage = false;
 	/**
 	 * On loadPlaces
 	 */
@@ -56,7 +53,7 @@
 					}}
 				/>
 				<HeaderButton
-					title={"New Sub Category"}
+					title={"New Ads"}
 					on:click={() => {
 						shown = true;
 					}}
@@ -69,12 +66,16 @@
 			<KLoukdoAdsImage
 				{Data}
 				on:onEdit={async (evt) => {
-					subCategory = evt.detail;
+					ads = evt.detail;
 					shownEdit = true;
 				}}
 				on:onDelete={async (evt) => {
-					subCategory = evt.detail;
+					ads = evt.detail;
 					shownDelete = true;
+				}}
+				on:onShowImage={async (evt) => {
+					ads = evt.detail;
+					shownAllImage = true;
 				}}
 			/>
 		</div>
@@ -96,8 +97,7 @@
 </div>
 
 <Modal {shown}>
-	<CreateKLoukdoSubCategory
-		categoryList={CategoryData}
+	<CreateKLoukdoAdsImage
 		on:close={() => {
 			shown = false;
 		}}
@@ -110,9 +110,8 @@
 
 
 <Modal shown={shownEdit}>
-	<UpdateKLoukdoSubCategory
-		param={subCategory}
-		categoryList={CategoryData}
+	<UpdateKLoukdoAdsImage
+		param={ads}
 		on:close={() => {
 			shownEdit = false;
 		}}
@@ -125,8 +124,8 @@
 
 <Modal shown={shownDelete}>
 	<DeleteModal
-		param={subCategory}
-		title={"sub category"}
+		param={ads}
+		title={"ads"}
 		on:close={() => {
 			shownDelete = false;
 		}}
@@ -134,9 +133,18 @@
 			shownDelete = false;
 			let id = evt.detail.id;
 			try {
-				const res = await deleteKLoukdoSubCategory.load({ id });
+				const res = await deleteKLoukdoAds.load({ id });
 			} catch {}
 			await loadAdsImage();
+		}}
+	/>
+</Modal>
+
+<Modal shown={shownAllImage}>
+	<ShowAllImage
+		param={[ads.image.url]}
+		on:close={() => {
+			shownAllImage = false;
 		}}
 	/>
 </Modal>

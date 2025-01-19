@@ -11,7 +11,7 @@
   import ShowAllImage from "$components/modals/KLoukdo/ShowAllImage.svelte";
   import { deleteKLoukdoProduct, getAllKLoukdoProducts } from "$providers/actions/kloukdo/kloukdoproduct";
   import CreateKLoukdoProduct from "$components/modals/KLoukdo/Product/CreateKLoukdoProduct.svelte";
-  import { getKLoukdoSubCategories } from "$providers/actions/kloukdo/kloukdosubcategory";
+  import { getKLoukdoSubCategories, getKLoukdoSubCategoriesByCategory } from "$providers/actions/kloukdo/kloukdosubcategory";
 
 	let product;
 	let shownEdit = false;
@@ -44,15 +44,13 @@
 			// to do
 		}
 	};
-	const loadSubCategories = async () => {
+	const loadSubCategories = async (category) => {
 		try {
-			const res = await getKLoukdoSubCategories.load();
+			const res = await getKLoukdoSubCategoriesByCategory.load({ category });
 			subCategoryData = res.data;
 		} catch (err) {
-			// to do
 		}
 	};
-
 	// When Operating start run it first
 	onMount(async () => {
 		await loadProducts();
@@ -125,6 +123,9 @@
 		on:create={async () => {
 			shown = false;
 			await loadProducts();
+		}}
+		on:subcategory={async (category) => {
+			await loadSubCategories(category.detail);
 		}}
 	/>
 </Modal>

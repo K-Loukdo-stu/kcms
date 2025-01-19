@@ -5,6 +5,7 @@
   import CheckBox from '$components/elements/CheckBox/CheckBox.svelte';
   import SelectOption from '$components/elements/SelectOption/SelectOption.svelte';
   import { createKLoukdoProduct } from '$providers/actions/kloukdo/kloukdoproduct';
+  import { uploadImage } from '$providers/actions/kloukdo/kloukdoimage';
   
       export let categoryList;
       export let subCategoryList;
@@ -19,23 +20,50 @@
       let discount = false;
       let discountPrice = 0;
       
+	let base64String = "data:image/jpeg;base64,";
+    let height;
+    let width;
+    let size;
+
+
       let disabledCreate = false;
   
       let shown = false;
   
       const createdService = async (evt) => {
           evt.preventDefault();
+          let image = await uploadImage.load({
+            height, name, size, width, base64:base64String
+          })
           let res = await createKLoukdoProduct.load({
-              name, category, subCategory, price, discountPrice, hasDiscount:discount, currency, photos
+              name, category, subCategory, price, discountPrice, hasDiscount:discount, currency, photos:image
           });
           if (res.success) disabledCreate = true;
           dispatch('create');
       };
+      
+
+    function imageUploaded() {
+        let file = document.querySelector(
+            'input[type=file]')['files'][0];
+
+        let reader = new FileReader();
+        console.log("next");
+
+        reader.onload = function () {
+            base64String = base64String + reader.result.replace("data:", "")
+                .replace(/^.+,/, "");
+
+            console.log(base64String);
+        }
+        reader.readAsDataURL(file);
+    }
+
   </script>
   
   <div class=" relative w-full h-full p-1 flex justify-center items-center">
       <div class=" absolute bg-white">
-          <div class="w-80 h-[46rem]">
+          <div class="w-[32rem] h-[46rem]">
               <button
                   type="button"
                   class="absolute top-3 right-2.5 text-gray-400 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-800 hover:text-white"
@@ -83,20 +111,21 @@
                                   required
                               />
                           </div>
-                          
-                          <div class="mb-4">
+                          <div class="flex">
+                            <div class="mb-4 flex-grow mr-4">
                               <SelectOption
                                 title="Category"
                                 options={categoryList}
                                 value=""
                                 on:change={(event) => {
                                     category = event.detail
+                                    dispatch('subcategory', category);
                                 }}
                               />
                               
                           </div>
                           
-                          <div class="mb-4">
+                          <div class="mb-4 flex-grow">
                               <SelectOption
                                 title="Sub-Category"
                                 options={subCategoryList}
@@ -107,6 +136,8 @@
                               />
                               
                           </div>
+                          </div>
+                          
                           <div class="mb-2">
                               <label
                                   for="price"
@@ -114,6 +145,7 @@
                               >
                               <input
                                   type="number"
+                                  min="0"
                                   name="price"
                                   bind:value={price}
                                   class="border text-center text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
@@ -155,16 +187,37 @@
                           </div>
                           <div class="mb-2">
                               <label
-                                  for="photos"
-                                  class="block mb-2 text-sm font-medium text-gray-900">Icon</label
+                                    for="photos"
+                                    class="block mb-2 text-sm font-medium text-gray-900">Icon</label
                               >
                               <input
-                                  disabled
-                                  type="text"
-                                  name="photos"
-                                  bind:value={photos}
-                                  class="border text-center text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400"
-                                  placeholder="Photos"
+                                    type="file"
+                                    name="photos"
+                                    bind:value={photos}
+                                    class="border text-center text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400"
+                                    placeholder="Photos"
+                                    on:change={(event) => {
+                                        const file = event.target.files[0]; // Get the first file from the file input
+                                
+                                        if (file) {
+                                        // File size and type
+                                        size = file.size;
+                                
+                                        // If the file is an image, get width and height
+                                            if (file.type.startsWith("image/")) {
+                                                const img = new Image();
+                                                img.onload = () => {
+                                                    width = img.width;
+                                                    height = img.height;
+                                                };
+                                                img.src = URL.createObjectURL(file); // Create a URL for the image
+                                            }
+                                        }
+
+                                        imageUploaded()
+                                        console.log(base64String)
+                                    }}
+
                               />
                           </div>
                       </div>
