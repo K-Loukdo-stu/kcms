@@ -16,6 +16,20 @@ export const CREATE_KLOUKDO_CATEGORY_MUTATION = gql`
     }
     `;
 
+export const GET_KLOUKDO_CATEGORY_BY_PAGE_QUERY = gql`
+query getKLoukdoCategoriesByPage ( $page: Float! ){
+    getKLoukdoCategoriesByPage ( page: $page){
+        category{
+            id
+            name
+            icon
+        },
+        total,
+        page
+    }
+}
+`;
+
 export const GET_KLOUKDO_CATEGORY_QUERY = gql`
 query getKLoukdoCategories{
     getKLoukdoCategories{

@@ -57,7 +57,7 @@ export const updateKLoukdoSubCategory = {
     load: async ({ id, name, category, icon}) => {
         const res = await endpointFetch({
             query: UPDATE_KLOUKDO_SUB_CATEGORY_MUTATION,
-            variables: { id, name, category, icon }
+            variables: { id, name, icon, category }
         }, APIs.KLOUKDO);
         return res;
     }

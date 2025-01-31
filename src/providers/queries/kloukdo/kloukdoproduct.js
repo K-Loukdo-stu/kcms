@@ -1,15 +1,47 @@
 import { gql } from '@apollo/client/core';
 
 export const GET_KLOUKDO_PRODUCT_QUERY = gql`
-query getAllKLoukdoProducts($page: Float!){
-    getAllKLoukdoProducts(page: $page){
+query getAllKLoukdoProducts($page: Float!, $limit: Float){
+    getAllKLoukdoProducts(
+        params: {
+            page: $page,
+            limit: $limit
+        }
+    ){
+    product{
         id
         name
-        price { price }
-        category{ name }
+        price {
+            id
+            price
+        }
+        category{
+            name
+        }
         subCategory{ name }
-        user {email username}
+        user {username phone}
         photos
+        createdAt
+    }
+    total
+    page
+  }
+}
+`;
+
+export const SEARCH_KLOUKDO_PRODUCT_QUERY = gql`
+query searchKLoukdoProductByName ($name: String!) {
+    searchKLoukdoProductByName (name: $name)
+    {
+        id, 
+        name, 
+        price {id, price, currency, discountPrice, hasDiscount,isMain},
+        photos
+        category{id, name}
+        subCategory{id, name}
+        user {username phone}
+        createdAt
+    
     }
 }
 `;
@@ -52,6 +84,23 @@ mutation deleteKLoukdoProduct ($id: String!){
         }
     ),
     {
+        name
+    }
+}
+`;
+
+export const UPDATE_KLOUKDO_PRODUCT_MUTATION = gql`
+mutation updateKLoukdoProduct ($id: String!, $name: String, $category: String, $subCategory: String, $price: Float)
+{
+    updateKLoukdoProduct (
+        params: {
+            id: $id,
+            category: $category
+            subCategory: $subCategory
+            name: $name
+            price: $price
+        }
+    ), {
         name
     }
 }

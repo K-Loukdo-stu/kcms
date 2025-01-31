@@ -1,5 +1,5 @@
 import { APIs } from "$lib/statics";
-import { CREATE_KLOUKDO_CATEGORY_MUTATION, DELETE_KLOUKDO_CATEGORY_MUTATION, GET_KLOUKDO_CATEGORY_QUERY, UPDATE_KLOUKDO_CATEGORY_MUTATION } from "$providers/queries/kloukdo/kloukdocategory";
+import { CREATE_KLOUKDO_CATEGORY_MUTATION, DELETE_KLOUKDO_CATEGORY_MUTATION, GET_KLOUKDO_CATEGORY_BY_PAGE_QUERY, GET_KLOUKDO_CATEGORY_QUERY, UPDATE_KLOUKDO_CATEGORY_MUTATION } from "$providers/queries/kloukdo/kloukdocategory";
 import { endpointFetch } from "../utils";
 
 export const getKLoukdoCategories = {
@@ -9,6 +9,20 @@ export const getKLoukdoCategories = {
         }, APIs.KLOUKDO);
         if (res?.success == true) {
             res['data'] = res['data']['getKLoukdoCategories'];
+            return res;
+        }
+        throw res;
+    }
+}
+
+export const getKLoukdoCategoriesByPage = {
+    load: async ({ page }) => {
+        const res = await endpointFetch({
+            query: GET_KLOUKDO_CATEGORY_BY_PAGE_QUERY,
+            variables: { page }
+        }, APIs.KLOUKDO);
+        if (res?.success == true) {
+            res['data'] = res['data']['getKLoukdoCategoriesByPage'];
             return res;
         }
         throw res;
