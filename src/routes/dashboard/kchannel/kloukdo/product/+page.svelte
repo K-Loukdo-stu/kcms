@@ -9,33 +9,43 @@
 	import UpdateKLoukdoCategory from "$components/modals/KLoukdo/Category/UpdateKLoukdoCategory.svelte";
   import KLoukdoProduct from "$components/elements/tables/KLoukdo/KLoukdoProduct.svelte";
   import ShowAllImage from "$components/modals/KLoukdo/ShowAllImage.svelte";
-  import { deleteKLoukdoProduct, getAllKLoukdoProducts } from "$providers/actions/kloukdo/kloukdoproduct";
+  import { deleteKLoukdoProduct, getAllKLoukdoProducts, searchKLoukdoProducts } from "$providers/actions/kloukdo/kloukdoproduct";
   import CreateKLoukdoProduct from "$components/modals/KLoukdo/Product/CreateKLoukdoProduct.svelte";
   import { getKLoukdoSubCategories, getKLoukdoSubCategoriesByCategory } from "$providers/actions/kloukdo/kloukdosubcategory";
+  import UpdateKLoukdoProduct from "$components/modals/KLoukdo/Product/UpdateKLoukdoProduct.svelte";
 
 	let product;
 	let shownEdit = false;
 	let shownDelete = false;
 	let shown = false;
 	let shownAllImage = false;
-	/**
-	 * On loadPlaces
-	 */
+	
 	let currentPage = 1;
 	let searchText = "";
 	let Data = [];
 	let Page = 0;
+
 	const loadProducts = async () => {
 		try {
-			const res = await getAllKLoukdoProducts.load({page: Page});
-			Data = res.data;
+			const res = await getAllKLoukdoProducts.load({page: currentPage-1, limit: 13});
+			Data = res.data.product;
+			Page = res.data.page;
 		} catch (err) {
 			// to do
 		}
 	};
 
+	const loadSearchProduct = async () => {
+		try {
+			const res = await searchKLoukdoProducts.load({name: searchText});
+			Data = res.data;
+			Page = 0;
+		} catch (error) {
+			
+		}
+	}
+
 	let CategoryData = [];
-	let subCategoryData = [];
 	const loadCategories = async () => {
 		try {
 			const res = await getKLoukdoCategories.load();
@@ -44,6 +54,8 @@
 			// to do
 		}
 	};
+	
+	let subCategoryData = [];
 	const loadSubCategories = async (category) => {
 		try {
 			const res = await getKLoukdoSubCategoriesByCategory.load({ category });
@@ -55,7 +67,7 @@
 	onMount(async () => {
 		await loadProducts();
 		await loadCategories();
-		await loadSubCategories();
+		// await loadSubCategories();
 	});
 </script>
 
@@ -67,15 +79,16 @@
 					on:onSearch={async (evt) => {
 						searchText = evt.detail;
 						currentPage = currentPage;
-						await loadProducts();
+						if (searchText == "") await loadProducts();
+						else await loadSearchProduct();
 					}}
 				/>
-				<HeaderButton
+				<!-- <HeaderButton
 					title={"New Product"}
 					on:click={() => {
 						shown = true;
 					}}
-				/>
+				/> -->
 			</div>
 		</div>
 	</div>
@@ -86,6 +99,9 @@
 				on:onEdit={async (evt) => {
 					product = evt.detail;
 					shownEdit = true;
+				}}
+				on:onCopy={async (evt) => {
+					navigator.clipboard.writeText(evt.detail.id);
 				}}
 				on:onDelete={async (evt) => {
 					product = evt.detail;
@@ -131,8 +147,10 @@
 </Modal>
 
 <Modal shown={shownEdit}>
-	<UpdateKLoukdoCategory
-		param={product}
+	<UpdateKLoukdoProduct
+		categoryList={CategoryData}
+		subCategoryList={subCategoryData}
+		product={product}
 		on:close={() => {
 			shownEdit = false;
 		}}

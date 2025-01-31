@@ -1,54 +1,91 @@
 <script>
-  import { createKLoukdoAds } from '$providers/actions/kloukdo/kloukdoadsimage';
-  import { uploadImage } from '$providers/actions/kloukdo/kloukdoimage';
-      import { createEventDispatcher } from 'svelte';
+    import { createKLoukdoAds } from '$providers/actions/kloukdo/kloukdoadsimage';
+    import { uploadImage } from '$providers/actions/kloukdo/kloukdoimage';
+    import { createEventDispatcher } from 'svelte';
   
-      const dispatch = createEventDispatcher();
-      let name = '';
-      let image;
-      let disabledCreate = false;
-      let endDate;
+    const dispatch = createEventDispatcher();
+    let name = '';
+    let image;
+    let disabledCreate = false;
+    let endDate;
 
     let base64String = "data:image/jpeg;base64,";
-    let height;
-    let width;
-    let size;
+    // let height;
+    // let width;
+    // let size;
+    let imgBlock;
 
-      const createdService = async (evt) => {
-          evt.preventDefault();
-          
-          let imageJson = await uploadImage.load({
-            height, name, size, width, base64:base64String
-          })
+    let loading;
+
+
+    const createdService = async (evt) => {
+        evt.preventDefault();
+        loading = true;
+        console.log({image})
+        let imageJson = await uploadImage.load({
+            height:image.height,
+            name:image.name,
+            size:image.size,
+            width:image.width,
+            base64:image.base64
+        });
+        console.log({imageJson});
+        let completeJsonImage = {
+            bucket: "kstorage-bucket",
+            contentType: "image/jpeg",
+            height: image.height,
+            width: image.width,
+            key: imageJson.key,
+            thumbnail: { url: imageJson.url, width: 100, height: 99 },
+            url: imageJson.url
+        };
+
         // let formattedEndDate = new Date(endDate).toISOString();
-          let res = await createKLoukdoAds.load({
-              name, image:imageJson, endDate
-          });
-          if (res.success) disabledCreate = true;
-          dispatch('create');
-      };
+        let res = await createKLoukdoAds.load({
+            name, image:completeJsonImage, endDate
+        });
+        if (res.success) disabledCreate = true;
+        dispatch('create');
+    };
 
       
-    function imageUploaded() {
-        let file = document.querySelector(
-            'input[type=file]')['files'][0];
-
+    var imageUploaded = function(event) {
+        const file = event.target.files[0]; // Get the first file from the file input
+        let imageJson = {};
+        imgBlock = URL.createObjectURL(file);
+        if (file) {
+        // File size and type
+        imageJson.size = file.size;
+        imageJson.name = file.name;
+    
+            // If the file is an image, get width and height
+            if (file.type.startsWith("image/")) {
+                const img = new Image();
+                img.onload = () => {
+                    imageJson.width = img.width;
+                    imageJson.height = img.height;
+                };
+                img.src = URL.createObjectURL(file); // Create a URL for the image
+            }
+        }
         let reader = new FileReader();
-        console.log("next");
 
         reader.onload = function () {
-            base64String = base64String + reader.result.replace("data:", "")
+            let string = base64String + reader.result.replace("data:", "")
                 .replace(/^.+,/, "");
-
-            console.log(base64String);
+            imageJson.base64 = string;
         }
         reader.readAsDataURL(file);
+        console.log({imageJson})
+        image = imageJson;
     }
+
+
   </script>
   
   <div class=" relative w-full h-full p-1 flex justify-center items-center">
       <div class=" absolute bg-white">
-          <div class="w-80 h-[26rem]">
+          <div class="w-80 h-full">
               <button
                   type="button"
                   class="absolute top-3 right-2.5 text-gray-400 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-800 hover:text-white"
@@ -81,6 +118,29 @@
                           </h3>
                       </div>
                       <div class="flex-grow">
+                        <label for="photos">
+                            <div class="flex justify-center items-center h-40 rounded-lg mb-2 text-sm font-medium text-gray-900 w-full border border-blue-400">
+                                {#if !imgBlock}
+                                    <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 15V18H24V20H21V23H19V20H16V18H19V15H21ZM21.0082 3C21.556 3 22 3.44495 22 3.9934L22.0007 13.3417C21.3749 13.1204 20.7015 13 20 13V5H4L4.001 19L13.2929 9.70715C13.6528 9.34604 14.22 9.31823 14.6123 9.62322L14.7065 9.70772L18.2521 13.2586C15.791 14.0069 14 16.2943 14 19C14 19.7015 14.1204 20.3749 14.3417 21.0007L2.9918 21C2.44405 21 2 20.5551 2 20.0066V3.9934C2 3.44476 2.45531 3 2.9918 3H21.0082ZM8 7C9.10457 7 10 7.89543 10 9C10 10.1046 9.10457 11 8 11C6.89543 11 6 10.1046 6 9C6 7.89543 6.89543 7 8 7Z"></path></svg>
+                                {:else}
+                                    <img alt="" id="output"
+                                        class="w-full object-cover h-40 rounded-lg"
+                                        src="{imgBlock}"
+                                    >
+                                {/if}
+                                
+                            </div>
+                        </label>
+                        <input
+                            required
+                            accept="image/png, image/jpg, image/jpeg"
+                            id="photos"
+                            type="file"
+                            name="photos"
+                            class="border text-center text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full h-0 bg-gray-600 border-gray-500 placeholder-gray-400 absolute bottom-0 opacity-0"
+                            placeholder="Photos"
+                            on:change={(event) => {imageUploaded(event, 1)}}
+                        />
                           <div class="mb-2">
                               <label
                                   for="name"
@@ -108,41 +168,6 @@
                                 class="border text-center text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
                                 placeholder="endDate"
                                 required
-                            />
-                        </div>
-                        <div class="mb-2">
-                            <label
-                                  for="photos"
-                                  class="block mb-2 text-sm font-medium text-gray-900">Icon</label
-                            >
-                            <input
-                                  type="file"
-                                  name="photos"
-                                  bind:value={image}
-                                  class="border text-center text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400"
-                                  placeholder="Photos"
-                                  on:change={(event) => {
-                                      const file = event.target.files[0]; // Get the first file from the file input
-                              
-                                      if (file) {
-                                      // File size and type
-                                      size = file.size;
-                              
-                                      // If the file is an image, get width and height
-                                          if (file.type.startsWith("image/")) {
-                                              const img = new Image();
-                                              img.onload = () => {
-                                                  width = img.width;
-                                                  height = img.height;
-                                              };
-                                              img.src = URL.createObjectURL(file); // Create a URL for the image
-                                          }
-                                      }
-
-                                      imageUploaded()
-                                      console.log(base64String)
-                                  }}
-
                             />
                         </div>
                       </div>

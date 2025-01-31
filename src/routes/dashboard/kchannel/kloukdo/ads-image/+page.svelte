@@ -44,14 +44,14 @@
 <div class="flex flex-col bg-white w-full h-[100%]">
 	<div class="flex-grow-0">
 		<div>
-			<div class="flex flex-row justify-between items-center">
-				<SearchText
+			<div class="flex flex-row justify-end items-center">
+				<!-- <SearchText
 					on:onSearch={async (evt) => {
 						searchText = evt.detail;
 						currentPage = currentPage;
 						await loadAdsImage();
 					}}
-				/>
+				/> -->
 				<HeaderButton
 					title={"New Ads"}
 					on:click={() => {

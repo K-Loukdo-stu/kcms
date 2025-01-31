@@ -1,6 +1,5 @@
 <script>
 	import { createService } from '$providers/actions/kauth/service';
-  	import { updateKLoukdoCategory } from '$providers/actions/kloukdo/kloukdocategory';
   import { updateKLoukdoSubCategory } from '$providers/actions/kloukdo/kloukdosubcategory';
 	import { createEventDispatcher } from 'svelte';
 
@@ -14,6 +13,7 @@
 	let icon;
 	const updateSubCategory = async (evt) => {
 		evt.preventDefault();
+		if (category == "") category = undefined
 		let res = await updateKLoukdoSubCategory.load({
 			id: param.id, name, category, icon
 		});
@@ -53,7 +53,7 @@
 				>
 					<div class="flex-grow-0">
 						<h3 class="text-xl font-medium text-gray-900 text-center">
-							Edit Category
+							Edit Sub Category
 						</h3>
 					</div>
 					<div class="flex-grow">
@@ -79,7 +79,6 @@
                                 bind:value={category}
                                 name="category" 
                                 class="border text-center text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 text-white appearance-none"
-                                required
                             >
                                 <option value="">Select Category</option>
                                 {#each categoryList as category}

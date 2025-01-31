@@ -29,11 +29,12 @@
 	let searchText = "";
 	let Data = [];
 	let CategoryData = [];
-	let Page = 3;
+	let Page;
 	const loadSubCategories = async () => {
 		try {
 			const res = await getKLoukdoSubCategoriesByPage.load({page: currentPage-1});
-			Data = res.data;
+			Data = res.data.subCategory;
+			Page = res.data.page;
 		} catch (err) {
 			// to do
 		}
@@ -57,14 +58,14 @@
 <div class="flex flex-col bg-white w-full h-[100%]">
 	<div class="flex-grow-0">
 		<div>
-			<div class="flex flex-row justify-between items-center">
-				<SearchText
+			<div class="flex flex-row justify-end items-center">
+				<!-- <SearchText
 					on:onSearch={async (evt) => {
 						searchText = evt.detail;
 						currentPage = currentPage;
 						await loadSubCategories();
 					}}
-				/>
+				/> -->
 				<HeaderButton
 					title={"New Sub Category"}
 					on:click={() => {
@@ -88,7 +89,8 @@
 				}}
 			/>
 		</div>
-		
+	</div>
+	
 	<div class="flex-grow-0 mb-5 mr-5">
 		{#if Page != 1}
 			<Pagenetion
@@ -96,14 +98,11 @@
 				{currentPage}
 				on:onCurrentPage={async (evt) => {
 					currentPage = evt.detail;
-					// Page = currentPage;
 					await loadSubCategories();
 				}}
 			/>
 		{/if}
 	</div>
-	</div>
-
 </div>
 
 <Modal {shown}>

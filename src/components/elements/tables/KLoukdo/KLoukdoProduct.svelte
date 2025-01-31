@@ -1,4 +1,5 @@
 <script>
+  import Copy from '$components/icons/Copy.svelte';
 	import Edit from '$components/icons/Edit.svelte';
 	import Trash from '$components/icons/Trash.svelte';
 	import { createEventDispatcher } from 'svelte';
@@ -8,17 +9,17 @@
 </script>
 
 <div class="overflow-x-auto">
-<table class="table auto w-full mt-5">
+<table class="table auto w-full mt-2">
     <thead class="text-sm  bg-[#787878] text-[#FFFFFF]">
 		<tr>
-			<th class="p-2">
+			<!-- <th class="p-2">
 				<div class="font-semibold text-center min-w-[100px]">id</div>
-			</th>
+			</th> -->
 			<th class="p-2">
 				<div class="font-semibold text-center min-w-[100px]">name</div>
 			</th>
 			<th class="p-2">
-				<div class="font-semibold text-center">email</div>
+				<div class="font-semibold text-center">seller</div>
 			</th>
 			<th class="p-2">
 				<div class="font-semibold text-center">price</div>
@@ -41,14 +42,14 @@
     <tbody class="text-sm divide-y divide-gray-300 text-[#585861]">
 		{#each Data as data}
 			<tr>
-				<td class="p-2">
+				<!-- <td class="p-2">
 					<div class=" text-gray-600 text-center">{data.id}</div>
-				</td>
+				</td> -->
 				<td class="p-2">
 					<div class=" text-gray-600 text-center">{data.name}</div>
 				</td>
 				<td class="p-2">
-					<div class=" text-gray-600 text-center">{data.user.email}</div>
+					<div class=" text-gray-600 text-center">{data.user.username}</div>
 				</td>
 				<td class="p-2">
 					<div class=" text-gray-600 text-center">{data.price.price}</div>
@@ -80,6 +81,14 @@
 							}}
 						>
 							<Edit />
+						</button>
+						<button
+							class="cursor-pointer hover:bg-gray-400/50 p-1 rounded-full"
+							on:click={() => {
+								dispatch('onCopy', data);
+							}}
+						>
+							<Copy />
 						</button>
 						<button
 							class="cursor-pointer hover:bg-gray-400/50 p-1 rounded-full"

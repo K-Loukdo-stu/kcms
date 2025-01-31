@@ -4,11 +4,12 @@
     import ShowOptionList from '../ShowOptionList.svelte';
   import CheckBox from '$components/elements/CheckBox/CheckBox.svelte';
   import SelectOption from '$components/elements/SelectOption/SelectOption.svelte';
-  import { createKLoukdoProduct } from '$providers/actions/kloukdo/kloukdoproduct';
+  import { createKLoukdoProduct, updateKLoukdoProduct } from '$providers/actions/kloukdo/kloukdoproduct';
   import { uploadImage } from '$providers/actions/kloukdo/kloukdoimage';
   
       export let categoryList;
       export let subCategoryList;
+      export let product;
   
       const dispatch = createEventDispatcher();
       let name = '';
@@ -20,49 +21,48 @@
       let discount = false;
       let discountPrice = 0;
       
-	let base64String = "data:image/jpeg;base64,";
-    let height;
-    let width;
-    let size;
+	// let base64String = "data:image/jpeg;base64,";
+    // let height;
+    // let width;
+    // let size;
 
 
-      let disabledCreate = false;
-  
-      let shown = false;
-  
-      const createdService = async (evt) => {
-          evt.preventDefault();
-          let image = await uploadImage.load({
-            height, name, size, width, base64:base64String
-          })
-          let res = await createKLoukdoProduct.load({
-              name, category, subCategory, price, discountPrice, hasDiscount:discount, currency, photos:image
-          });
-          if (res.success) disabledCreate = true;
-          dispatch('create');
-      };
+    let disabledCreate = false;
+
+    let shown = false;
+
+
+    const updateProduct = async (evt) => {
+		evt.preventDefault();
+        // if (category == )
+		let res = await updateKLoukdoProduct.load({
+			id: product.id, name, category, subCategory, price
+		});
+		if (res.success) disabledCreate = true;
+		dispatch('edit');
+	};
       
-    function imageUploaded() {
-        let file = document.querySelector(
-            'input[type=file]')['files'][0];
+    // function imageUploaded() {
+    //     let file = document.querySelector(
+    //         'input[type=file]')['files'][0];
 
-        let reader = new FileReader();
-        console.log("next");
+    //     let reader = new FileReader();
+    //     console.log("next");
 
-        reader.onload = function () {
-            base64String = base64String + reader.result.replace("data:", "")
-                .replace(/^.+,/, "");
+    //     reader.onload = function () {
+    //         base64String = base64String + reader.result.replace("data:", "")
+    //             .replace(/^.+,/, "");
 
-            console.log(base64String);
-        }
-        reader.readAsDataURL(file);
-    }
+    //         console.log(base64String);
+    //     }
+    //     reader.readAsDataURL(file);
+    // }
 
   </script>
   
   <div class=" relative w-full h-full p-1 flex justify-center items-center">
       <div class=" absolute bg-white">
-          <div class="w-[32rem] h-[46rem]">
+          <div class="w-[32rem] h-full">
               <button
                   type="button"
                   class="absolute top-3 right-2.5 text-gray-400 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-800 hover:text-white"
@@ -86,7 +86,7 @@
               <div class="py-6 px-6 lg:px-8">
                   <form
                       class="space-y-6 w-full h-full flex flex-col"
-                      on:submit|preventDefault={createdService}
+                      on:submit|preventDefault={updateProduct}
                       method="post"
                   >
                       <div class="flex-grow-0">
@@ -107,7 +107,7 @@
                                   bind:value={name}
                                   class="border text-center text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
                                   placeholder="Name"
-                                  required
+                                  
                               />
                           </div>
                           <div class="flex">
@@ -116,6 +116,7 @@
                                 title="Category"
                                 options={categoryList}
                                 value=""
+                                isRequired={false}
                                 on:change={(event) => {
                                     category = event.detail
                                     dispatch('subcategory', category);
@@ -128,6 +129,7 @@
                               <SelectOption
                                 title="Sub-Category"
                                 options={subCategoryList}
+                                isRequired={false}
                                 value=""
                                 on:change={(event) => {
                                     subCategory = event.detail
@@ -149,11 +151,11 @@
                                   bind:value={price}
                                   class="border text-center text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
                                   placeholder="Price"   
-                                  required
                               />
                           </div>
                           <div class="mb-2">
                               <SelectOption
+                                isRequired={false}
                                 title="Currency"
                                 options={[{ id: "USD", name: "USD" }, { id: "KHR", name: "KHR" } ]}
                                 value=""
@@ -184,7 +186,7 @@
                                 />
                             </div>
                           </div>
-                          <div class="mb-2">
+                          <!-- <div class="mb-2">
                               <label
                                     for="photos"
                                     class="block mb-2 text-sm font-medium text-gray-900">Icon</label
@@ -218,7 +220,7 @@
                                     }}
 
                               />
-                          </div>
+                          </div> -->
                       </div>
                       <div class="flex-grow-0">
                           <div class="flex space-x-2 justify-center mb-4">

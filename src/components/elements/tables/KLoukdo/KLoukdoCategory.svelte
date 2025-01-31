@@ -7,7 +7,7 @@
 </script>
 
 
-<table class="table auto w-full mt-5">
+<table class="table auto w-full mt-2">
     <thead class="text-sm  bg-[#787878] text-[#FFFFFF]">
         <!-- <th>
             <div class="font-semibold text-center">id</div>
